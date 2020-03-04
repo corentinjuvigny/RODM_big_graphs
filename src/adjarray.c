@@ -23,25 +23,9 @@ Performance:
 Up to 200 million edges on my laptop with 8G of RAM: takes more or less 4G of RAM and 30 seconds (I have an SSD hardrive) for 100M edges.
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>//to estimate the runing time
+#include "adjarray.h"
 
 #define NLINKS 100000000 //maximum number of edges for memory allocation, will increase if needed
-
-typedef struct {
-	unsigned long s;
-	unsigned long t;
-} edge;
-
-//edge list structure:
-typedef struct {
-	unsigned long n;//number of nodes
-	unsigned long e;//number of edges
-	edge *edges;//list of edges
-	unsigned long *cd;//cumulative degree cd[0]=0 length=n+1
-	unsigned long *adj;//concatenated lists of neighbors of all nodes
-} adjlist;
 
 //compute the maximum of three unsigned long
 inline unsigned long max3(unsigned long a,unsigned long b,unsigned long c){
@@ -50,7 +34,8 @@ inline unsigned long max3(unsigned long a,unsigned long b,unsigned long c){
 }
 
 //reading the edgelist from file
-adjlist* readedgelist(char* input){
+adjlist* readedgelist(char* input)
+{
 	unsigned long e1=NLINKS;
 	FILE *file=fopen(input,"r");
 
@@ -76,9 +61,10 @@ adjlist* readedgelist(char* input){
 }
 
 //building the adjacency matrix
-void mkadjlist(adjlist* g){
+void mkadjlist(adjlist* g)
+{
 	unsigned long i,u,v;
-	unsigned long *d=calloc(g->n,sizeof(unsigned long));
+	unsigned long *d=calloc(g->n,sizeof(*d));
 
 	for (i=0;i<g->e;i++) {
 		d[g->edges[i].s]++;
@@ -107,35 +93,10 @@ void mkadjlist(adjlist* g){
 
 
 //freeing memory
-void free_adjlist(adjlist *g){
+void free_adjlist(adjlist *g)
+{
 	free(g->edges);
 	free(g->cd);
 	free(g->adj);
 	free(g);
 }
-
-int main(int argc,char** argv){
-	adjlist* g;
-	time_t t1,t2;
-
-	t1=time(NULL);
-
-	printf("Reading edgelist from file %s\n",argv[1]);
-	g=readedgelist(argv[1]);
-
-	printf("Number of nodes: %lu\n",g->n);
-	printf("Number of edges: %lu\n",g->e);
-
-	printf("Building the adjacency list\n");
-	mkadjlist(g);
-	
-	free_adjlist(g);
-
-	t2=time(NULL);
-
-	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
-
-	return 0;
-}
-
-
