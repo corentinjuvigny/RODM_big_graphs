@@ -28,7 +28,8 @@ Up to 200 million edges on my laptop with 8G of RAM: takes more or less 4G of RA
 #define NLINKS 100000000 //maximum number of edges for memory allocation, will increase if needed
 
 //compute the maximum of three unsigned long
-inline unsigned long max3(unsigned long a,unsigned long b,unsigned long c){
+inline unsigned long max3(unsigned long a,unsigned long b,unsigned long c)
+{
 	a=(a>b) ? a : b;
 	return (a>c) ? a : c;
 }
