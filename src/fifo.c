@@ -1,118 +1,85 @@
-/*
- * A simple kernel FIFO implementation.
- *
- * Copyright (C) 2004 Stelian Pop <stelian@popies.net>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "fifo.h"
 
-#ifndef min
-#define min(x,y) ({ \
-	__typeof__(x) _x = (x);	\
-	__typeof__(y) _y = (y);	\
-	(void) (&_x == &_y);		\
-	_x < _y ? _x : _y; })
-#endif
-
-#ifndef max
-#define max(x,y) ({ \
-	__typeof__(x) _x = (x);	\
-	__typeof__(y) _y = (y);	\
-	(void) (&_x == &_y);		\
-	_x > _y ? _x : _y; })
-#endif
-
-#define min_not_zero(x, y) ({		\
-	__typeof__(x) __x = (x);		\
-	__typeof__(y) __y = (y);		\
-	__x == 0 ? __y : ((__y == 0) ? __x : min(__x, __y)); })
-
-struct fifo *fifo_alloc(unsigned int size)
+FIFO_t* FIFO_Create(unsigned long len)
 {
-	struct fifo *fifo;
-
-	fifo = malloc(sizeof(struct fifo));
-	if (!fifo)
+	FIFO_t* fifo = malloc(sizeof(FIFO_t));
+	if (fifo == NULL) return NULL;
+	fifo->buf = malloc(len * sizeof(len));
+	if (fifo->buf == NULL)
+	{
+		free(fifo);
+		fifo = NULL;
 		return NULL;
-
-	fifo->buffer = malloc(size);
-	fifo->size = size;
-	fifo->in = fifo->out = 0;
-
+	}
+	fifo->len = len;
+	fifo->r = fifo->buf;
+	fifo->w = fifo->buf;
+	fifo->cnt = 0;
 	return fifo;
 }
 
-void fifo_free(struct fifo *fifo)
+void FIFO_Flush(FIFO_t* fifo)
 {
-	free(fifo->buffer);
-	free(fifo);
+	fifo->r = fifo->buf;
+	fifo->w = fifo->buf;
+	fifo->cnt = 0;
 }
 
-unsigned int fifo_put(struct fifo *fifo, void *buffer, unsigned int len)
+unsigned long FIFO_Push(FIFO_t* fifo, unsigned long element)
 {
-	unsigned int l;
-
-	len = min(len, fifo_room(fifo));
-
-	/* first put the data starting from fifo->in to buffer end */
-	l = min(len, fifo->size - (fifo->in & (fifo->size - 1)));
-	memcpy(fifo->buffer + (fifo->in & (fifo->size - 1)), buffer, l);
-
-	/* then put the rest (if any) at the beginning of the buffer */
-	memcpy(fifo->buffer, buffer + l, len - l);
-
-	/*
-	 * Ensure that we add the bytes to the fifo -before-
-	 * we update the fifo->in index.
-	 */
-
-	fifo->in += len;
-
-	return len;
+	if (fifo->cnt == fifo->len) {
+		return 0;
+	}
+	*fifo->w = element;
+	fifo->w = (fifo->w == (fifo->buf+fifo->len-1)) ? fifo->buf :  fifo->w + 1;
+	fifo->cnt++;
+	return 1;
 }
 
-unsigned int fifo_get(struct fifo *fifo, void *buf, unsigned int len)
+unsigned long FIFO_Pop(FIFO_t* fifo)
 {
-	len = min(len, fifo->in - fifo->out);
-
-	if (buf) {
-		unsigned int l;
-
-		/*
-		 * first get the data from fifo->out until the end of the buffer
-		 */
-		l = min(len, fifo->size - (fifo->out & (fifo->size - 1)));
-		memcpy(buf, fifo->buffer + (fifo->out & (fifo->size - 1)), l);
-
-		/*
-		 * then get the rest (if any) from the beginning of the buffer
-		 */
-		memcpy(buf + l, fifo->buffer, len - l);
+	if (fifo->cnt == 0) {
+		return 0;
+	} else {
+		unsigned long data = *fifo->r;
+		fifo->r = (fifo->r == (fifo->buf+fifo->len-1)) ? fifo->buf :  fifo->r + 1;
+		fifo->cnt--;
+		return data;
 	}
 
-	fifo->out += len;
+}
 
-	if (fifo->in == fifo->out)
-		fifo->in = fifo->out = 0;
+unsigned long FIFO_Peek(FIFO_t* fifo)
+{
+	if (fifo->cnt == 0) {
+		return 0;
+	}
+	return *fifo->r;
+}
 
-	return len;
+unsigned long FIFO_IsFull(FIFO_t* fifo)
+{
+	return fifo->cnt == fifo->len;
+}
+
+unsigned long FIFO_IsEmpty(FIFO_t* fifo)
+{
+	return fifo->cnt == 0;
+}
+
+unsigned long FIFO_GetUsed(FIFO_t* fifo)
+{
+	return fifo->cnt;
+}
+
+unsigned long FIFO_GetFree(FIFO_t* fifo)
+{
+	return fifo->len - fifo->cnt;
+}
+
+void FIFO_Destroy(FIFO_t* fifo)
+{
+   free(fifo->buf);
+	free(fifo);
+	fifo = NULL;
 }

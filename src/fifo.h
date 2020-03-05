@@ -1,49 +1,27 @@
 #ifndef FIO_FIFO_H
 #define FIO_FIFO_H
-/*
- * A simple FIFO implementation.
- *
- * Copyright (C) 2004 Stelian Pop <stelian@popies.net>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
 
-typedef struct fifo Fifo;
-typedef const Fifo CFifo;
+#include <stdlib.h>
+#include <string.h>
 
-struct fifo {
-	unsigned char *buffer;	/* the buffer holding the data */
-	unsigned int size;	/* the size of the allocated buffer */
-	unsigned int in;	/* data is added at offset (in % size) */
-	unsigned int out;	/* data is extracted from off. (out % size) */
-};
-
-struct fifo *fifo_alloc(unsigned int len);
-unsigned int fifo_put(struct fifo *f, void *buff, unsigned int len);
-unsigned int fifo_get(struct fifo *f, void *buff, unsigned int len);
-void fifo_free(struct fifo *f);
-
-static inline unsigned int fifo_len(struct fifo *fifo)
+typedef struct FIFO
 {
-	return fifo->in - fifo->out;
-}
+	unsigned long *buf;
+	unsigned long len;
+	unsigned long *r;
+	unsigned long *w;
+	unsigned long cnt;
+} FIFO_t;
 
-static inline unsigned int fifo_room(struct fifo *fifo)
-{
-	return fifo->size - fifo->in + fifo->out;
-}
+FIFO_t* FIFO_Create(unsigned long len);
+void FIFO_Flush(FIFO_t* fifo);
+unsigned long FIFO_Push(FIFO_t* fifo, unsigned long element);
+unsigned long FIFO_Pop(FIFO_t* fifo);
+unsigned long FIFO_Peek(FIFO_t* fifo);
+unsigned long FIFO_IsFull(FIFO_t* fifo);
+unsigned long FIFO_IsEmpty(FIFO_t* fifo);
+unsigned long FIFO_GetUsed(FIFO_t* fifo);
+unsigned long FIFO_GetFree(FIFO_t* fifo);
+void FIFO_Destroy(FIFO_t* fifo);
 
 #endif

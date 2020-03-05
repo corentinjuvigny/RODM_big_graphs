@@ -3,6 +3,7 @@
 #include <time.h>//to estimate the runing time
 
 #include "adjarray.h"
+#include "bfs.h"
 
 int main(int argc,char** argv)
 {
@@ -24,12 +25,22 @@ int main(int argc,char** argv)
 
 	printf("Building the adjacency list\n");
 	mkadjlist(g);
-	
-	free_adjlist(g);
 
 	t2=time(NULL);
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
+
+   unsigned long *connection = connected_graphs(g);
+
+   unsigned long u;
+   for (u = 0; u < g->n; u++) {
+      printf("%ld ",connection[u]);
+   }
+   printf("\n");
+
+   free(connection);
+	
+   free_adjlist(g);
 
 	return 0;
 }
