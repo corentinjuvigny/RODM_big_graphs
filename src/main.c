@@ -30,16 +30,16 @@ int main(int argc,char** argv)
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
 
-   unsigned long *connection = connected_graphs(g);
+   Bfs_data *bs = connected_graphs(g);
 
-   unsigned long u;
-   for (u = 0; u < g->n; u++) {
-      printf("%ld ",connection[u]);
-   }
-   printf("\n");
+   bfs_show(bs);
 
-   free(connection);
-	
+   bfs_free(bs);
+
+   unsigned long diameter = diameter_of_graph(g);
+
+   printf("Diameter of g: %ld\n",diameter);
+
    free_adjlist(g);
 
 	return 0;

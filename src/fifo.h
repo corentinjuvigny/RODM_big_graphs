@@ -13,15 +13,15 @@ typedef struct FIFO
 	unsigned long cnt;
 } FIFO_t;
 
-FIFO_t* FIFO_Create(unsigned long len);
-void FIFO_Flush(FIFO_t* fifo);
-unsigned long FIFO_Push(FIFO_t* fifo, unsigned long element);
-unsigned long FIFO_Pop(FIFO_t* fifo);
-unsigned long FIFO_Peek(FIFO_t* fifo);
-unsigned long FIFO_IsFull(FIFO_t* fifo);
-unsigned long FIFO_IsEmpty(FIFO_t* fifo);
-unsigned long FIFO_GetUsed(FIFO_t* fifo);
-unsigned long FIFO_GetFree(FIFO_t* fifo);
-void FIFO_Destroy(FIFO_t* fifo);
+extern FIFO_t* FIFO_Create(unsigned long len);
+extern void FIFO_Flush(FIFO_t* fifo);
+extern unsigned long FIFO_Push(FIFO_t* fifo, unsigned long element);
+extern unsigned long FIFO_Pop(FIFO_t* fifo);
+extern unsigned long FIFO_Peek(FIFO_t* fifo);
+extern unsigned long FIFO_IsFull(FIFO_t* fifo);
+extern unsigned long FIFO_IsEmpty(FIFO_t* fifo);
+extern unsigned long FIFO_GetUsed(FIFO_t* fifo);
+extern unsigned long FIFO_GetFree(FIFO_t* fifo);
+extern void FIFO_Destroy(FIFO_t* fifo);
 
 #endif
