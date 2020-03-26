@@ -1,6 +1,6 @@
 #include "bfs.h"
 
-unsigned long bfs_alg(Bfs_data *data, unsigned long s, unsigned long marker)
+unsigned long bfs_alg(Bfs_data *data, unsigned long *farthest, unsigned long s, unsigned long marker)
 {
    unsigned long i, u, v, diameter;
    unsigned char gone_deeper = 0;
@@ -19,6 +19,8 @@ unsigned long bfs_alg(Bfs_data *data, unsigned long s, unsigned long marker)
             gone_deeper = 1;
             FIFO_Push(fifo,v);
             data->mrkTab[v] = marker;
+            if (farthest != NULL)
+               *farthest = v;
             if (data->nbrMrkTab != NULL)
                (data->nbrMrkTab[marker-1])++;
          }
@@ -52,21 +54,29 @@ Bfs_data *connected_graphs(adjlist *adj)
    bs->nbrMrkTab = calloc(adj->n,sizeof(*(bs->nbrMrkTab)));
 
    while (bs_not_yet_completly_explored(bs,&u))
-      bfs_alg(bs,u,marker++);
+      bfs_alg(bs,NULL,u,marker++);
 
    return bs;
 }
 
 unsigned long diameter_of_graph(adjlist *adj)
 {
-   unsigned long u, diameter = 0;
+   unsigned int it = 0;
+   unsigned long u, farthest, diameter = 0;
    Bfs_data *bs = malloc(sizeof(*bs));
    bs->adj = adj;
-   bs->mrkTab = calloc(adj->n,sizeof(*bs->mrkTab));
    bs->nbrMrkTab = NULL;
+
+   srand(time(NULL));
    
-   for (u = 0; u < bs->adj->n; u++)
-      diameter = max(diameter,bfs_alg(bs,u,1));
+   u = rand()%adj->n;
+   while (it++ < 1000) {
+      bs->mrkTab = calloc(adj->n,sizeof(*bs->mrkTab));
+      diameter = max(diameter,bfs_alg(bs,&farthest,u,1));
+      u = farthest == u ? rand()%adj->n : farthest;
+      free(bs->mrkTab);
+      bs->mrkTab = NULL;
+   }
 
    bfs_free(bs);
 

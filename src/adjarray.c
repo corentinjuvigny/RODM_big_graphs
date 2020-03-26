@@ -92,7 +92,6 @@ void mkadjlist(adjlist* g)
 	//free(g->edges);
 }
 
-
 //freeing memory
 void free_adjlist(adjlist *g)
 {

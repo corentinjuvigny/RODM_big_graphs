@@ -18,7 +18,10 @@ struct _Bfs_data {
    unsigned long *nbrMrkTab;
 };
 
-extern unsigned long bfs_alg(Bfs_data *data, unsigned long s, unsigned long marker);
+extern unsigned long bfs_alg(Bfs_data *data, 
+                             unsigned long *farthest,
+                             unsigned long s,
+                             unsigned long marker);
 
 extern Bfs_data *connected_graphs(adjlist *adj);
 

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 typedef struct {
 	unsigned long s;
@@ -23,6 +24,9 @@ adjlist* readedgelist(char* input);
 
 //building the adjacency matrix
 void mkadjlist(adjlist* g);
+
+//building the directed adjency matrix
+void mkdirectedadjlist(adjlist* g);
 
 //freeing memory
 void free_adjlist(adjlist *g);
