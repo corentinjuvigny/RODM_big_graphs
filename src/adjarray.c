@@ -92,6 +92,34 @@ void mkadjlist(adjlist* g)
 	//free(g->edges);
 }
 
+//building the adjacency matrix
+void mkdirectedadjlist(adjlist* g)
+{
+	unsigned long i,u,v;
+	unsigned long *d=calloc(g->n,sizeof(*d));
+
+	for (i=0;i<g->e;i++) {
+		d[g->edges[i].s]++;
+	}
+
+	g->cd=malloc((g->n+1)*sizeof(unsigned long));
+	g->cd[0]=0;
+	for (i=1;i<g->n+1;i++) {
+		g->cd[i]=g->cd[i-1]+d[i-1];
+		d[i-1]=0;
+	}
+
+	g->adj=malloc(g->e*sizeof(unsigned long));
+
+	for (i=0;i<g->e;i++) {
+		u=g->edges[i].s;
+		v=g->edges[i].t;
+		g->adj[ g->cd[u] + d[u]++ ]=v;
+	}
+
+	free(d);
+}
+
 //freeing memory
 void free_adjlist(adjlist *g)
 {

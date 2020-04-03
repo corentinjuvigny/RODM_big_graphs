@@ -4,6 +4,7 @@
 
 #include "adjarray.h"
 #include "bfs.h"
+#include "pagerank.h"
 
 int main(int argc,char** argv)
 {
@@ -24,21 +25,31 @@ int main(int argc,char** argv)
 	printf("Number of edges: %lu\n",g->e);
 
 	printf("Building the adjacency list\n");
-	mkadjlist(g);
-
+	//mkadjlist(g);
+	mkdirectedadjlist(g);
+   
 	t2=time(NULL);
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
 
-   Bfs_data *bs = connected_graphs(g);
+//   Bfs_data *bs = connected_graphs(g);
 
-   bfs_show(bs);
+//   bfs_show(bs);
 
-   bfs_free(bs);
+//   bfs_free(bs);
 
-   unsigned long diameter = diameter_of_graph(g);
+//   unsigned long diameter = diameter_of_graph(g);
 
-   printf("Diameter of g: %ld\n",diameter);
+//   printf("Diameter of g: %ld\n",diameter);
+
+     
+   double *pgr = pagerank(g,20,0.15);
+   
+   for (unsigned int i = 0; i < g->n; i++)
+      printf("%E ",pgr[i]);
+   printf("\n");
+
+   free(pgr);
 
    free_adjlist(g);
 
