@@ -5,6 +5,7 @@
 #include "adjarray.h"
 #include "bfs.h"
 #include "pagerank.h"
+#include "kcore_decomposition.h"
 
 int main(int argc,char** argv)
 {
@@ -25,12 +26,14 @@ int main(int argc,char** argv)
 	printf("Number of edges: %lu\n",g->e);
 
 	printf("Building the adjacency list\n");
-	//mkadjlist(g);
-	mkdirectedadjlist(g);
+	mkadjlist(g); // generate undirected graph
+	//mkdirectedadjlist(g); // generate directed graph
    
 	t2=time(NULL);
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
+
+/* Exercice 1 */
 
 //   Bfs_data *bs = connected_graphs(g);
 
@@ -42,7 +45,9 @@ int main(int argc,char** argv)
 
 //   printf("Diameter of g: %ld\n",diameter);
 
-     
+
+/* Exercice 2 */
+   /*  
    double *pgr = pagerank(g,20,0.15);
    
    for (unsigned int i = 0; i < g->n; i++)
@@ -50,7 +55,17 @@ int main(int argc,char** argv)
    printf("\n");
 
    free(pgr);
+*/
+   Kcore_info kc = coreDecomposition(g);
 
+   printf("%ld\n",kc.cost_max);
+
+   for (unsigned int i = 0; i < g->n; i++)
+      printf("%ld %ld ; ",kc.cost[i],kc.order[i]);
+   printf("\n");
+
+   free_kcore(&kc);
+   
    free_adjlist(g);
 
 	return 0;

@@ -24,4 +24,27 @@ extern unsigned long FIFO_GetUsed(FIFO_t* fifo);
 extern unsigned long FIFO_GetFree(FIFO_t* fifo);
 extern void FIFO_Destroy(FIFO_t* fifo);
 
+typedef struct
+{
+    unsigned long size;
+    unsigned long* p;
+} NodeArray;
+
+
+NodeArray newArray();
+static inline unsigned long getBackNode(NodeArray* array)
+{
+   return array->p[array->size-1];
+}
+
+void addNode(NodeArray* array, unsigned long node);
+
+unsigned long popNode(NodeArray* array);
+
+static inline void deleteNode(NodeArray* array, unsigned long idx)
+{
+    array->p[idx] = getBackNode(array);
+    popNode(array);
+}
+
 #endif

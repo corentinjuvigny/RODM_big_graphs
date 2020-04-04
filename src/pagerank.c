@@ -1,12 +1,24 @@
 #include "adjarray.h"
 
-static double norm_vect(const adjlist *adj, const double *p)
+double* directedGraphProd(adjlist *adj, double *p)
 {
-   unsigned long s;
-   double res = 0.f;
-   for (s = 0; s < adj->n; s++)
-      res += p[s];
-   return res;
+    double* newP = malloc(adj->n*sizeof(double));
+    unsigned long u = 0, j;
+    
+    for (u = 0; u < adj->n; u++)
+        newP[u] = 0.0;
+
+    for (u = 0; u < adj->n; u++) {
+        if (adj->cd[u+1] > adj->cd[u]) {
+
+            for (j = adj->cd[u]; j < adj->cd[u+1]; j++) {
+                newP[adj->adj[j]] += p[u]/(adj->cd[u+1] - adj->cd[u]);
+            }
+        }
+    }
+    free(p);
+
+    return newP;
 }
 
 double* pagerank(adjlist *adj, unsigned int t, double alpha)
@@ -26,16 +38,17 @@ double* pagerank(adjlist *adj, unsigned int t, double alpha)
    }
 
    for (i = 0; i < t; i++) {
-      for (e = 0; e < adj->e; e++) {
-         p[adj->edges[e].s] = d[adj->edges[e].s] > 0.0 ? p[adj->edges[e].s]/d[adj->edges[e].s] : 0.0;
-      }
+      norm = 0;
+      p = directedGraphProd(adj,p);
       for (e = 0; e < adj->n; e++) {
          p[e] = (1.0 - alpha) * p[e] + alpha / (double)adj->n;
+         norm += p[e];
       }
-      norm = norm_vect(adj,p);
+      norm = (1.0 - norm) / (double)adj->n;
+
       //printf("norm = %E, 1/n = %E, n = %lu\n",norm,alpha/adj->n, adj->n);
       for (e = 0; e < adj->n; e++) {
-         p[e] += (1.0 - norm) / (double)adj->n;
+         p[e] += norm;
       }
       for (e = 0; e < adj->n; e++)
          printf("%E ",p[e]);

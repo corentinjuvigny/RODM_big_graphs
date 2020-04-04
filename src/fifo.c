@@ -83,3 +83,25 @@ void FIFO_Destroy(FIFO_t* fifo)
 	free(fifo);
 	fifo = NULL;
 }
+
+NodeArray newArray(){
+    NodeArray array;
+    array.p = malloc(0);
+    array.size = 0;
+    return array;
+}
+
+void addNode(NodeArray* array, unsigned long node)
+{
+    array->p = realloc(array->p,(array->size+1)*sizeof(unsigned long));
+    array->p[array->size] = node;
+    array->size++;
+}
+
+unsigned long popNode(NodeArray* array)
+{
+    unsigned long node = getBackNode(array);
+    array->size--;
+    array->p = realloc(array->p,array->size*sizeof(unsigned long));
+    return node;
+}
