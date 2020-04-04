@@ -35,15 +35,15 @@ int main(int argc,char** argv)
 
 /* Exercice 1 */
 
-//   Bfs_data *bs = connected_graphs(g);
+   Bfs_data *bs = connected_graphs(g);
 
-//   bfs_show(bs);
+   bfs_show(bs);
 
-//   bfs_free(bs);
+   bfs_free(bs);
 
-//   unsigned long diameter = diameter_of_graph(g);
+   unsigned long diameter = diameter_of_graph(g);
 
-//   printf("Diameter of g: %ld\n",diameter);
+   printf("Diameter of g: %ld\n",diameter);
 
 
 /* Exercice 2 */
@@ -56,6 +56,8 @@ int main(int argc,char** argv)
 
    free(pgr);
 */
+
+#if 0
    Kcore_info kc = coreDecomposition(g);
 
    printf("%ld\n",kc.cost_max);
@@ -65,7 +67,8 @@ int main(int argc,char** argv)
    printf("\n");
 
    free_kcore(&kc);
-   
+#endif   
+
    free_adjlist(g);
 
 	return 0;
