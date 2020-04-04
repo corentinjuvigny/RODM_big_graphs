@@ -45,17 +45,21 @@ static char bs_not_yet_completly_explored(Bfs_data *bs, unsigned long *pos)
    return 0;
 }
 
-Bfs_data *connected_graphs(adjlist *adj)
+Bfs_data *connected_graphs(adjlist *adj, unsigned long *maxSizeComp, unsigned long *nbrComp)
 {
    Bfs_data *bs = malloc(sizeof(*bs));
    unsigned long u = 0, marker = 1;
    bs->adj = adj;
    bs->mrkTab = calloc(adj->n,sizeof(*(bs->mrkTab)));
    bs->nbrMrkTab = calloc(adj->n,sizeof(*(bs->nbrMrkTab)));
+   *maxSizeComp = *nbrComp = 0;
 
-   while (bs_not_yet_completly_explored(bs,&u))
-      bfs_alg(bs,NULL,u,marker++);
-
+   while (bs_not_yet_completly_explored(bs,&u)) {
+      unsigned long diam = bfs_alg(bs,NULL,u,marker++);
+      if (diam > *maxSizeComp)
+         *maxSizeComp = diam;
+      (*nbrComp)++;
+   }
    return bs;
 }
 

@@ -35,7 +35,11 @@ int main(int argc,char** argv)
 
 /* Exercice 1 */
 
-   Bfs_data *bs = connected_graphs(g);
+   printf("br of nodes : %ld, nbr of edges : %ld\n",g->n,g->e);
+
+   unsigned long maxSizeComp, nbrComp;
+
+   Bfs_data *bs = connected_graphs(g,&maxSizeComp,&nbrComp);
 
    bfs_show(bs);
 
@@ -43,7 +47,7 @@ int main(int argc,char** argv)
 
    unsigned long diameter = diameter_of_graph(g);
 
-   printf("Diameter of g: %ld\n",diameter);
+   printf("Diameter of g: %ld, nbr of components = %ld, max comp size = %ld\n",diameter,nbrComp,maxSizeComp);
 
 
 /* Exercice 2 */

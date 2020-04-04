@@ -23,7 +23,7 @@ extern unsigned long bfs_alg(Bfs_data *data,
                              unsigned long s,
                              unsigned long marker);
 
-extern Bfs_data *connected_graphs(adjlist *adj);
+extern Bfs_data *connected_graphs(adjlist *adj, unsigned long *maxSizeComp, unsigned long *nbrComp);
 
 extern unsigned long diameter_of_graph(adjlist *adj);
 
