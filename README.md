@@ -33,6 +33,9 @@ adjmatrix is much less scallable than the two other programs for sparse graphs. 
 If the graph is directed (and weighted) with selfloops and you want to make it undirected unweighted without selfloops, use the following linux command line.  
 awk '{if ($1<$2) print $1" "$2;else if ($2<$1) print $2" "$1}' net.txt | sort -n -k1,2 -u > net2.txt
 
+To compile :
+gcc -O9 src/main.c src/adjarray.c src/fifo.c src/bfs.c src/pagerank.c src/kcore_decomposition.c
+
 ## Initial contributors
 
 Maximilien Danisch  
