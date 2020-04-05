@@ -20,6 +20,7 @@ struct _Bfs_data {
 
 extern unsigned long bfs_alg(Bfs_data *data, 
                              unsigned long *farthest,
+                             unsigned long *nbrElementComp,
                              unsigned long s,
                              unsigned long marker);
 
