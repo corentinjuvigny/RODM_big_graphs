@@ -234,7 +234,7 @@ unsigned long* label_propagation(adjlist* g) {
 		condition=0;
 		for (i=0;i<g->n;i++) {
 			if(label[i]!=max_lab(t[i],g,label)) {
-				condition=0;
+				condition=1;
 				break;
 			}
 		}
@@ -264,10 +264,17 @@ int main(int argc,char** argv)
 	printf("Building the adjacency list\n");
 	mkadjlist(g); // generate undirected graph
 	//mkdirectedadjlist(g); // generate directed graph
-   
+	/*ecercice 6 partie 1
 	unsigned long ct=compte_triangle(g);
 	printf("triangle of g: %ld\n",ct);
+	*/
 	
+	unsigned long* label=malloc(g->n*sizeof(unsigned long));
+	label=label_propagation(g);
+	for (int i=0;i<g->n;i++) {
+		printf("%ld ",label[i]);
+	}
+	printf("\n");
 	t2=time(NULL);
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
