@@ -15,12 +15,7 @@ typedef struct {
 
 
 int comp_noeud( const void* l1, const void* l2) {
-	/*if (l1->d>=l2->d) {
-		return(-1);
-	}
-	else {
-		return(1);
-	}	*/
+	
 	return((*(noeud*)l1).d-(*(noeud*)l2).d);
 }
 
@@ -29,11 +24,9 @@ void tri(noeud* l,int n) {
 }
 
 void placement(noeud* l,int n,unsigned long* t) {
-	/*int* t=malloc(n*sizeof(int));*/
 	for (int i=0;i<n;i++) {
 		t[l[i].v]=i;
 	}
-	/*return(t);*/
 }
 
 unsigned long max2(unsigned long* t,unsigned long n) {
@@ -46,7 +39,7 @@ unsigned long max2(unsigned long* t,unsigned long n) {
 			max=t[i];
 		}
 	}
-	return(max);
+	return(ind);
 }
 
 void DAG(adjlist* g,unsigned long* t,adjlist* dg) {
@@ -58,7 +51,6 @@ void DAG(adjlist* g,unsigned long* t,adjlist* dg) {
 	//dg->edges=malloc(g->e*sizeof(edge));
 	unsigned long i,u,v;
 	/*unsigned long de=0;*/
-	printf("Pute\n");
 	for (i=0;i<g->e;i++) {
 		if(t[g->edges[i].s]<t[g->edges[i].t]) {
 			
@@ -69,13 +61,10 @@ void DAG(adjlist* g,unsigned long* t,adjlist* dg) {
 			dd[g->edges[i].t]++;
 		}
 	}
-	printf("yeet %ld\n",i);/*
-	for (i=0;i<g->e;i++) {
-		d[g->edges[i].s]++;
-		d[g->edges[i].t]++;
-	}*/
-	printf("max e: %ld, n: %ld, e:%ld\n",max2(dd,dg->n),dg->n,dg->e);
-	printf("salope\n");
+	
+	
+	//printf("max e: %ld, n: %ld, e:%ld\n",max2(dd,dg->n),dg->n,dg->e);
+	
 	dg->cd=calloc((dg->n+1),sizeof(unsigned long));
 	dg->cd[0]=0;
 	for (i=1;i<dg->n+1;i++) {
@@ -83,10 +72,10 @@ void DAG(adjlist* g,unsigned long* t,adjlist* dg) {
 		dg->cd[i]=dg->cd[i-1]+dd[i-1];
 		dd[i-1]=0;
 	}
-	printf("cd: %ld %ld\n",dg->cd[g->n],g->cd[g->n]);
+	//printf("cd: %ld %ld\n",dg->cd[g->n],g->cd[g->n]);
 	
 	dg->adj=malloc(	dg->e*sizeof(unsigned long));
-	printf("petite pute\n");
+	
 	for (i=0;i<g->e;i++) {
 		u=g->edges[i].s;
 		v=g->edges[i].t;
@@ -97,7 +86,7 @@ void DAG(adjlist* g,unsigned long* t,adjlist* dg) {
 			dg->adj[ dg->cd[v] + dd[v]++ ]=u;
 		}
 	}
-	printf("chien de la casse\n");
+	//printf("chien de la casse\n");
 	free(dd);
 	/*free(g->edges);*/
 }
@@ -152,7 +141,7 @@ unsigned long compte_triangle(adjlist* g) {
 
 
 unsigned long compte_triangle(adjlist* g) {
-	printf("Juvisy\n");
+	
 	
 	
 	noeud* l=malloc(g->n * sizeof(noeud));
@@ -185,7 +174,7 @@ unsigned long compte_triangle(adjlist* g) {
 			}
 		}
 	}
-	printf("mdr\n");			
+	free_adjlist(dg);
 	return(ct);
 }
 
@@ -209,7 +198,7 @@ void melanger(unsigned long* tab,int nb)
 unsigned long max_lab(unsigned long i,adjlist* g,unsigned long* label) {
 	int j;
 	unsigned long* lab2=calloc(g->n,sizeof(unsigned long));
-	for(j=g->cd[i];j=g->cd[i+1];j++) {
+	for(j=g->cd[i];j<g->cd[i+1];j++) {
 		lab2[label[g->adj[j]]]++;
 	}
 	return(max2(lab2,g->n));
@@ -226,11 +215,17 @@ unsigned long* label_propagation(adjlist* g) {
 		label[i]=i;
 	}
 	condition=1;
-	while(condition) {
+	unsigned long iter=0;
+	while(condition && iter<g->n) {
+		iter++;
+		//printf("ahah\n");
 		melanger(t,n);
+		//printf("ohoh\n");
 		for (i=0;i<g->n;i++) {
 			label[t[i]]=max_lab(t[i],g,label);
+			//printf("ora\n");
 		}
+		//printf("wryyy\n");
 		condition=0;
 		for (i=0;i<g->n;i++) {
 			if(label[i]!=max_lab(t[i],g,label)) {
@@ -268,13 +263,13 @@ int main(int argc,char** argv)
 	unsigned long ct=compte_triangle(g);
 	printf("triangle of g: %ld\n",ct);
 	*/
-	
+	/*LABEL PROPAGATION
 	unsigned long* label=malloc(g->n*sizeof(unsigned long));
 	label=label_propagation(g);
 	for (int i=0;i<g->n;i++) {
 		printf("%ld ",label[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	t2=time(NULL);
 
 	printf("- Overall time = %ldh%ldm%lds\n",(t2-t1)/3600,((t2-t1)%3600)/60,((t2-t1)%60));
